@@ -2,6 +2,7 @@ package main
 
 import (
 	proto "Activereplication/grpc"
+	"context"
 	"flag"
 	"log"
 	"net"
@@ -11,17 +12,15 @@ import (
 )
 
 type Server struct {
-	//proto.UnimplementedAuctionServer
+	proto.UnimplementedBankServer
 	name          string
 	port          int
-	highestBid    int32
-	highestBidder int32
+	balance			int32
 }
 
 var port = flag.Int("port", 0, "server port number") // create the port that recieves the port that the client wants to access to
 
 func main() {
-
 	flag.Parse()
 
 	server := &Server{
@@ -46,7 +45,7 @@ func startServer(server *Server) {
 
 	log.Printf("Server started at port %v", server.port)
 
-	proto.RegisterAuctionServer(grpcServer, server)
+	proto.RegisterBankServer(grpcServer, server)
 	serverError := grpcServer.Serve(listen)
 
 	if serverError != nil {
@@ -54,3 +53,30 @@ func startServer(server *Server) {
 	}
 
 }
+
+//simple depositi method. You just insert a positive amount
+func (s *Server) Deposit(ctx context.Context, in *proto.Amount) (*proto.Ack, error){
+	if(in.Amount < 0){
+		log.Println("Fail, you must deposit positive amount")
+		return &proto.Ack{Ack: fail}, nil
+	} else {
+		s.balance += in.Amount
+		log.Printf("Server %d: Money successfully added to the account", s.port)
+		return &proto.Ack{Ack: success}, nil
+	}
+}
+
+//returning the balance on the server
+func (s *Server) GetBalance(ctx context.Context, in *proto.Empty) (*proto.Balance, error){
+	return &proto.Balance{Balance: s.balance}, nil
+}
+
+
+
+// our enum types
+type ack string
+
+const (
+	fail    string = "fail"
+	success string = "success"
+)
