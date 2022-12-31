@@ -1,6 +1,7 @@
 package main
 
 import (
+	proto "Activereplication/grpc"
 	"flag"
 	"log"
 	"net"
@@ -45,7 +46,7 @@ func startServer(server *Server) {
 
 	log.Printf("Server started at port %v", server.port)
 
-	//proto.RegisterAuctionServer(grpcServer, server)
+	proto.RegisterAuctionServer(grpcServer, server)
 	serverError := grpcServer.Serve(listen)
 
 	if serverError != nil {
