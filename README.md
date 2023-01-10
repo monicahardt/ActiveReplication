@@ -2,7 +2,7 @@
 
 To run the program you have to open up five different terminals
 
-In the first three terminals, you have to start the three respective servers. They have to be started at port 5000, 5001 and 5002.
+In the first three terminals, you have to start the three respective servers. They have to be started at port 5001, 5002 and 5003.
 
 Feel free to copy the following three lines to each respective terminal to start the servers:
 
